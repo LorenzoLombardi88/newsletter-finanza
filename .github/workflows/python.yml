@@ -3,28 +3,28 @@ name: Python CI
 on:
   push:
     branches:
-      - main
+      - main  # Esegui il workflow ogni volta che fai un push sul ramo 'main'
   pull_request:
     branches:
-      - main
+      - main  # Esegui il workflow anche su pull request per 'main'
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Usa Ubuntu come sistema operativo per eseguire il workflow
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v2  # Preleva il codice dal tuo repository
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.8'  # Imposta la versione di Python (modifica se necessario)
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        python -m pip install --upgrade pip  # Aggiorna pip
+        pip install -r requirements.txt  # Installa le librerie dal file 'requirements.txt'
 
     - name: Run script
       run: |
