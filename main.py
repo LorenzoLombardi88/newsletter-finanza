@@ -20,9 +20,20 @@ def get_articles():
 
 # Funzione per ottenere i tassi di cambio
 def get_exchange_rate():
-    cr = CurrencyRates()
-    rate = cr.get_rate('EUR', 'USD')  # Tasso EUR/USD
-    return f"Tasso di cambio EUR/USD: {rate}"
+    api_key = 'YOUR_EXCHANGERATE_API_KEY'  # Inserisci la tua API Key
+    url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/EUR"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if data['result'] == 'success':
+            rate = data['conversion_rates']['USD']  # Tasso EUR/USD
+            return f"Tasso di cambio EUR/USD: {rate}"
+        else:
+            print("Errore nella risposta dell'API.")
+            return None
+    else:
+        print("Errore nel recuperare il tasso di cambio.")
+        return Non
 
 # Funzione per ottenere la chiusura degli indici di borsa
 def get_stock_market_closures():
