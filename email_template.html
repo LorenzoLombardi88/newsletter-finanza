@@ -1,0 +1,25 @@
+<html>
+<head><style>body { font-family: Arial; }</style></head>
+<body>
+    <h2>📰 Newsletter Finanziaria Settimanale</h2>
+    <p>{{ recap }}</p>
+    <h3>🌍 Articoli della settimana</h3>
+    <ul>
+        {% for article in articles %}
+            <li><a href="{{ article.url }}">{{ article.title }}</a></li>
+        {% endfor %}
+    </ul>
+    <h3>💱 Tassi di Cambio</h3>
+    <ul>
+        {% for fx in fx_rates %}
+            <li>{{ fx.pair }}: {{ fx.value }}</li>
+        {% endfor %}
+    </ul>
+    <h3>📈 Chiusura Borse</h3>
+    <ul>
+        {% for market in markets %}
+            <li>{{ market.name }}: {{ market.close }} ({{ market.change }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
