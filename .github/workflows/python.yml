@@ -25,7 +25,20 @@ jobs:
       run: |
         python -m pip install --upgrade pip  # Aggiorna pip
         pip install -r requirements.txt  # Installa le librerie dal file 'requirements.txt'
+        pip show requests forex-python beautifulsoup4 yfinance newsapi-python  # Mostra le versioni delle librerie
+
+    - name: Check Python and Dependencies
+      run: |
+        python --version  # Mostra la versione di Python
+        pip list  # Mostra tutte le librerie installate e le relative versioni
+        echo "Verifica file requirements.txt"  # Messaggio di debug
 
     - name: Run script
       run: |
+        echo "Esecuzione del main.py..."  # Messaggio di debug
         python main.py  # Assicurati che il nome del tuo script sia corretto
+
+    - name: Debug: Verifica l'output del log
+      run: |
+        echo "Controlla i log generati durante l'esecuzione di main.py"
+        tail -n 50 /home/runner/work/{your-repo-name}/{your-repo-name}/main.py # Cambia con il nome giusto della cartella se necessario
