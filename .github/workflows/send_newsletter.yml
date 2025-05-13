@@ -2,7 +2,7 @@ name: Send Weekly Newsletter
 
 on:
   schedule:
-    - cron: '0 9 * * 0'  # Ogni domenica alle 09:00 UTC
+    - cron: '43 16 * * 2'  # Ogni martedì alle 16:43 UTC
   workflow_dispatch:
 
 jobs:
