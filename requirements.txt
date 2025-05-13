@@ -1,5 +1,5 @@
-requests
-beautifulsoup4
-forex-python
-yfinance
-newsapi-python
+requests==2.28.1
+forex-python==1.5
+beautifulsoup4==4.11.1
+yfinance==0.1.70
+newsapi-python==0.2.6
