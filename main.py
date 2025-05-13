@@ -3,126 +3,101 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import requests
 from bs4 import BeautifulSoup
-from forex_python.converter import CurrencyRates
 import yfinance as yf
 from newsapi import NewsApiClient
 
-# Funzione per ottenere articoli rilevanti
 def get_articles():
-    url = "https://www.ilsole24ore.com/"  # Modifica con il sito di tua scelta
+    url = "https://www.ilsole24ore.com/"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
-    articles = soup.find_all('a', class_='title')[:5]  # Trova i primi 5 articoli
-    articles_list = []
-    for article in articles:
-        articles_list.append(f"- {article.get_text()}")
+    articles = soup.find_all('a', class_='title')[:5]
+    articles_list = [f"- {a.get_text(strip=True)}" for a in articles]
     return articles_list
 
-# Funzione per ottenere i tassi di cambio
 def get_exchange_rate():
-    api_key = 'YOUR_EXCHANGERATE_API_KEY'  # Inserisci la tua API Key
-    url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/EUR"
+    url = "https://api.exchangerate.host/latest?base=EUR&symbols=USD"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-        if data['result'] == 'success':
-            rate = data['conversion_rates']['USD']  # Tasso EUR/USD
-            return f"Tasso di cambio EUR/USD: {rate}"
-        else:
-            print("Errore nella risposta dell'API.")
-            return None
+        rate = data['rates']['USD']
+        return f"Tasso di cambio EUR/USD: {rate:.4f}"
     else:
-        print("Errore nel recuperare il tasso di cambio.")
-        return Non
+        return "Errore nel recupero del tasso di cambio."
 
-# Funzione per ottenere la chiusura degli indici di borsa
 def get_stock_market_closures():
-    indices = ['^IXIC', '^DJI', '^GSPC']  # NASDAQ, Dow Jones, S&P 500
+    indices = {
+        '^IXIC': 'NASDAQ',
+        '^DJI': 'Dow Jones',
+        '^GSPC': 'S&P 500'
+    }
     closures = []
-    for index in indices:
-        data = yf.download(index, period='1d', interval='1m')
-        closing_price = data['Close'][-1]  # Ultima chiusura
-        closures.append(f"{index}: {closing_price}")
+    for symbol, name in indices.items():
+        data = yf.download(symbol, period='1d', interval='1d')
+        if not data.empty:
+            close = data['Close'].iloc[-1]
+            closures.append(f"{name}: {close:.2f} USD")
     return closures
 
-# Funzione per ottenere le notizie finanziarie (NewsAPI)
 def get_news():
-    api_key = '9ad037d7a2e54a1d8c5ee5464b4d9782'  # Registrati su NewsAPI per ottenere una chiave API gratuita
+    api_key = '9ad037d7a2e54a1d8c5ee5464b4d9782'
     newsapi = NewsApiClient(api_key=api_key)
     articles = newsapi.get_everything(q='finanza', language='it', page_size=5)
-    news_list = []
-    for article in articles['articles']:
-        news_list.append(f"- {article['title']}")
-    return news_list
+    return [f"- {a['title']}" for a in articles['articles']]
 
-# Funzione per inviare l'email
 def send_email(content):
-    # Dati di accesso per il login su Gmail
-    sender_email = "lombardilorenzo8824@gmail.com"  # Il tuo indirizzo email
-    receiver_email = "lorenzo.lombardi@coesia.com"  # Destinatario
-    password = "clmg fhpi njka zmrf"  # La password per le app (non la password del tuo account)
+    sender = "lombardilorenzo8824@gmail.com"
+    receiver = "lorenzo.lombardi@coesia.com"
+    password = "clmg fhpi njka zmrf"  # Puoi sostituirlo con un secret GitHub
 
-    # Imposta l'oggetto e il corpo dell'email
     msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
+    msg['From'] = sender
+    msg['To'] = receiver
     msg['Subject'] = "Newsletter Settimanale - Recap"
 
-    # Corpo dell'email
     body = f"""
-    Ciao Lorenzo,
+Ciao Lorenzo,
 
-    Ecco il recap della settimana:
+Ecco il recap della settimana:
 
-    Articoli rilevanti:
-    {content['articles']}
+Articoli rilevanti:
+{content['articles']}
 
-    Tassi di cambio EUR/USD:
-    {content['exchange_rate']}
+Tassi di cambio EUR/USD:
+{content['exchange_rate']}
 
-    Chiusure principali borse mondiali:
-    {content['closures']}
+Chiusure principali borse mondiali:
+{content['closures']}
 
-    Notizie finanziarie:
-    {content['news']}
+Notizie finanziarie:
+{content['news']}
 
-    Saluti,
-    La tua Newsletter Automatizzata
-    """
-
+Saluti,
+La tua Newsletter Automatizzata
+"""
     msg.attach(MIMEText(body, 'plain'))
 
-    # Connessione al server Gmail e invio dell'email
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()  # Sicurezza
-        server.login(sender_email, password)
-        text = msg.as_string()
-        server.sendmail(sender_email, receiver_email, text)
+        server.starttls()
+        server.login(sender, password)
+        server.sendmail(sender, receiver, msg.as_string())
         print("Email inviata con successo!")
     except Exception as e:
         print(f"Errore nell'invio dell'email: {e}")
     finally:
         server.quit()
 
-# Funzione principale per raccogliere i dati e inviare l'email
 def create_and_send_newsletter():
-    # Raccogli i dati
     articles = get_articles()
     exchange_rate = get_exchange_rate()
     closures = get_stock_market_closures()
     news = get_news()
-
-    # Prepara i dati per l'email
     content = {
         'articles': "\n".join(articles),
         'exchange_rate': exchange_rate,
         'closures': "\n".join(closures),
         'news': "\n".join(news)
     }
-
-    # Invia l'email
     send_email(content)
 
-# Esegui la funzione
 create_and_send_newsletter()
