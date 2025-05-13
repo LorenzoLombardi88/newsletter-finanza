@@ -31,7 +31,7 @@ def get_stock_market_closures():
 
 # Funzione per ottenere le notizie finanziarie (NewsAPI)
 def get_news():
-    api_key = 'YOUR_NEWSAPI_KEY'  # Registrati su NewsAPI per ottenere una chiave API gratuita
+    api_key = 'Y9ad037d7a2e54a1d8c5ee5464b4d9782'  # Registrati su NewsAPI per ottenere una chiave API gratuita
     newsapi = NewsApiClient(api_key=api_key)
     articles = newsapi.get_everything(q='finanza', language='it', page_size=5)
     print("\nNotizie finanziarie:")
