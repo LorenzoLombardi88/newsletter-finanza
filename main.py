@@ -100,4 +100,8 @@ def create_and_send_newsletter():
     }
     send_email(content)
 
-create_and_send_newsletter()
+# create_and_send_newsletter()
+
+if __name__ == "__main__":
+    create_and_send_newsletter()
+
