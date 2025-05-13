@@ -1,0 +1,24 @@
+name: Send Weekly Newsletter
+
+on:
+  schedule:
+    - cron: '0 9 * * 0'  # Ogni domenica alle 09:00 UTC
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clona il repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Installa dipendenze
+        run: pip install -r requirements.txt
+
+      - name: Esegui lo script newsletter
+        run: python main.py
