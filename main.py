@@ -49,7 +49,7 @@ def send_email(content):
     # Dati di accesso per il login su Gmail
     sender_email = "lombardilorenzo8824@gmail.com"  # Il tuo indirizzo email
     receiver_email = "lorenzo.lombardi@coesia.com"  # Destinatario
-    password = "YOUR_GMAIL_APP_PASSWORD"  # La password per le app (non la password del tuo account)
+    password = "clmg fhpi njka zmrf"  # La password per le app (non la password del tuo account)
 
     # Imposta l'oggetto e il corpo dell'email
     msg = MIMEMultipart()
